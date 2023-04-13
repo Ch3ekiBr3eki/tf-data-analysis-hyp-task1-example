@@ -8,18 +8,19 @@ def solution(x_success: int,
              x_cnt: int, 
              y_success: int, 
              y_cnt: int) -> bool:
-    # Измените код этой функции
-    # Это будет вашим решением
-    # Не меняйте название функции и её аргументы
+    
     p1 = x_success / x_cnt
     p2 = y_success / y_cnt
-
     p_pool = (x_success + y_success) / (x_cnt + y_cnt)
-    se_pool = np.sqrt(p_pool * (1 - p_pool) * (1 / x_cnt + 1 / y_cnt))
-
-    z_score = (p1 - p2) / se_pool
-
+    
+    se = np.sqrt(p1 * (1 - p1) / x_cnt + p2 * (1 - p2) / y_cnt)
+    z_score = (p1 - p2) / se
+    
     alpha = 0.02
     z_crit = stats.norm.ppf(1 - alpha/2)
-
-    return abs(z_score) > z_crit
+    p_value = 2 * (1 - stats.norm.cdf(abs(z_score)))
+    
+    if abs(z_score) > z_crit and p_value < alpha:
+        return True
+    else:
+        return False
