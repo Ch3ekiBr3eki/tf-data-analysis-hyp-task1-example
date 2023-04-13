@@ -11,19 +11,15 @@ def solution(x_success: int,
     # Измените код этой функции
     # Это будет вашим решением
     # Не меняйте название функции и её аргументы
-    n1 = x_cnt
-    n2 = y_cnt
-    p = (x_success + y_success) / (x_cnt + y_cnt)
-    n1_exp = n1 * p
-    n2_exp = n2 * p
-    
-    chi_sq = ((x_success - n1_exp) ** 2) / n1_exp + ((y_success - n2_exp) ** 2) / n2_exp
-    
-    df = 1
-    
-    critical_value = stats.chi2.ppf(0.98, df)
-    
-    if chi_sq > critical_value:
-        return True
-    else:
-        return False
+    p1 = x_success / x_cnt
+    p2 = y_success / y_cnt
+
+    p_pool = (x_success + y_success) / (x_cnt + y_cnt)
+    se_pool = np.sqrt(p_pool * (1 - p_pool) * (1 / x_cnt + 1 / y_cnt))
+
+    z_score = (p1 - p2) / se_pool
+
+    alpha = 0.02
+    z_crit = stats.norm.ppf(1 - alpha/2)
+
+    return abs(z_score) > z_crit
